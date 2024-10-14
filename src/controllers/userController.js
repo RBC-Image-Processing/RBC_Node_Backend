@@ -1,5 +1,143 @@
+import { User } from "../database/models";
+import { assignRole } from "../utils/assignRole";
+import { generateRandomPassword } from "../utils/authUtil";
 import { getStandardResponse } from "../utils/standardResponse";
 
-export const userController = async (req, res) => {
-  return getStandardResponse(req, res, 200, "userController");
+export const getUsers = async (req, res, next) => {
+  try {
+    //retrieve all the users of the system
+    let users = await User.findAll({ attributes: { exclude: ["password"] } });
+
+    if (!users) {
+      return getStandardResponse(req, res, 404, "No users found", null);
+    }
+
+    return getStandardResponse(req, res, 200, "All users retrieved ", users);
+  } catch (error) {
+    console.log("Error " + error);
+    next(error);
+  }
+};
+
+export const getUser = async (req, res, next) => {
+  try {
+    let { userId } = req.params;
+    //retrieve all the users of the system
+    let singleUser = await User.findOne({
+      where: { userId: userId },
+      attributes: { exclude: ["password"] },
+    });
+
+    if (!singleUser) {
+      return getStandardResponse(
+        req,
+        res,
+        404,
+        "No user found with given Id",
+        null
+      );
+    }
+
+    return getStandardResponse(
+      req,
+      res,
+      200,
+      "User retrieved successfully",
+      singleUser
+    );
+  } catch (error) {
+    console.log("Error " + error);
+    next(error);
+  }
+};
+
+export const createUser = async (req, res, next) => {
+  try {
+    let { email } = req.body;
+    // Check if the user already exists
+    let userFound = await User.findOne({ where: { email: email } });
+
+    if (userFound) {
+      return getStandardResponse(req, res, 200, "User already exists", null);
+    }
+
+    let default_pass = { password: generateRandomPassword() };
+
+    let userObj = { ...req.body, ...default_pass };
+
+    console.log(userObj, "user obj");
+
+    //create and return a new user if they does not exist
+    let createdUser = await User.create(userObj);
+
+    //assign  role to the created user
+
+    assignRole(createdUser.userId, createdUser.roleId, true);
+
+    const userResponse = createdUser.toJSON();
+
+    // Remove the password from the plain object
+    delete userResponse.password;
+
+    return getStandardResponse(req, res, 201, "User created", userResponse);
+  } catch (error) {
+    console.log("Error " + error);
+    next(error);
+  }
+};
+
+export const updateUser = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+
+    // Check if the user exists
+    let userFound = await User.findOne({ where: { userId: userId } });
+
+    if (!userFound) {
+      return getStandardResponse(req, res, 404, "User not found", null);
+    }
+
+    // Check if the role_id has changed
+    if (role_id && role_id !== userFound.role_id) {
+      // Update the user's role and notify them
+      await userFound.update({ role_id });
+      assignRole(userId, role_id); // This should handle role assignment and sending email notifications.
+    }
+
+    // Update other user details (excluding role_id)
+    await userFound.update({ ...otherUserDetails });
+
+    const userResponse = userFound.toJSON();
+
+    // Remove the password from the response object
+    delete userResponse.password;
+
+    return getStandardResponse(
+      req,
+      res,
+      200,
+      "User updated successfully",
+      userResponse
+    );
+  } catch (error) {
+    console.error("Error: " + error);
+    next(error);
+  }
+};
+
+export const deleteUser = async (req, res, next) => {
+  try {
+    let { userId } = req.params;
+    //retrieve all the users of the system
+    let userFound = await User.findOne({ where: { userId: userId } });
+
+    if (userFound) {
+      await userFound.destroy();
+    }
+
+    return getStandardResponse(req, res, 200, "User deleted");
+  } catch (error) {
+    console.log("Error " + error);
+    next(error);
+  }
 };

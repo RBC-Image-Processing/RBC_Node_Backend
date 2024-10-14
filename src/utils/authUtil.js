@@ -26,6 +26,8 @@ export const createJwtToken = async (userId, role) => {
       role,
     };
 
-    return await jwt.sign(payLoad, process.env.JWT_SECRET);
-  } catch (error) {}
+    return jwt.sign(payLoad, process.env.JWT_SECRET_KEY);
+  } catch (error) {
+    console.log(error);
+  }
 };

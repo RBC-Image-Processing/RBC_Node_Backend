@@ -1,9 +1,50 @@
-import { checkPassword, hashPassword } from "../utils/authUtil";
+import { User, UserRole } from "../database/models";
+import { checkPassword, createJwtToken, hashPassword } from "../utils/authUtil";
 import { getStandardResponse } from "../utils/standardResponse";
 
 export const login = async (req, res, next) => {
+  const { email, password } = req.body;
+
   try {
-    return getStandardResponse(req, res, 200, "Login was successful");
+    //check if the provided email is in the database
+    let userFound = await User.findOne({
+      where: { email: email },
+    });
+    if (!userFound) {
+      return getStandardResponse(
+        req,
+        res,
+        404,
+        "Invalid Email or Password",
+        null
+      );
+    }
+
+    //compare the given password and the password in the database
+    let passwordMatch = await checkPassword(
+      password.trim(),
+      userFound.password
+    );
+
+    if (!passwordMatch) {
+      return getStandardResponse(
+        req,
+        res,
+        404,
+        "Invalid Email or Password",
+        null
+      );
+    }
+
+    //create a token for the user
+    let token = await createJwtToken(userFound.userId, userFound.roleId);
+
+    return getStandardResponse(req, res, 200, "Login successful", {
+      token: token,
+      email: userFound.email,
+      fullName: userFound.fullName,
+      roleId: userFound.roleId,
+    });
   } catch (error) {
     console.log("Error " + error);
     next(error);
@@ -73,7 +114,7 @@ export const SendPasswordResetEmail = async (req, res, next) => {
       verificationLink: resetLink,
     };
 
-    await sendMail(user.fullName, email, message);
+    await sendMail(User.fullName, email, message, false);
     return getStandardResponse(req, res, 200, "Email was sent");
   } catch (error) {
     next(error);
@@ -125,8 +166,6 @@ export const passwordReset = async (req, res, next) => {
   }
 };
 
-
 export const logout = async (req, res) => {
   return getStandardResponse(req, res, 200, "Logout successful", null);
 };
-

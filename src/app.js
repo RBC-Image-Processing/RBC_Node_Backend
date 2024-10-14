@@ -30,7 +30,7 @@ app.use(helmet());
 app.use("/api-doc", swaggerUi.serve, swaggerUi.setup(options.definition));
 app.use("/api", routes);
 app.get("/", (req, res) => {
-  res.status(200).json({ message: "Welcome to Emergency Social Network" });
+  res.status(200).json({ message: "Welcome to RBC-MIDAp" });
 });
 
 app.use((err, req, res, next) => {
@@ -43,6 +43,5 @@ app.use((err, req, res, next) => {
     stack: err.stack,
   });
 });
-
 
 export default app;

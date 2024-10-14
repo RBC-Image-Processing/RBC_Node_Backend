@@ -1,8 +1,6 @@
 import app from "./app";
 import db from "./database/models";
-import SocketUtils from "./utils/socketUtil";
 const port = process.env.PORT || 3000;
-const { peerServer } = require("./utils/peerServer");
 
 (async () => {
   try {
@@ -16,4 +14,3 @@ const { peerServer } = require("./utils/peerServer");
 const server = app.listen(port, "0.0.0.0", () => {
   console.log(`Server started at ${process.env.APP_URL}:${port}`);
 });
-

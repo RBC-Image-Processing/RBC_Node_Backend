@@ -6,6 +6,17 @@ import envConfigs from "../../config/db";
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || "development";
 const config = envConfigs[env];
+
+// Add SSL settings if the environment is 'production' or as needed
+if (env === "production") {
+  config.dialectOptions = {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    },
+  };
+}
+
 const db = {};
 
 let sequelize;

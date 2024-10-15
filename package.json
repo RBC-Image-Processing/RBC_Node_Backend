@@ -4,7 +4,7 @@
   "description": "This project is for Team 4 in the Foundations of Software Engineering at Carnegie Mellon University. It is the Emergency Social Network application",
   "main": "index.js",
   "scripts": {
-    "start": "npm run build && node dist/index ",
+    "start": "npm run build && node dist/index",
     "deploy": "npm run migrate && npm run seed",
     "build": "babel src --out-dir dist",
     "dev": "npm run build && nodemon dist/index.js",

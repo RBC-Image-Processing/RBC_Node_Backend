@@ -15,5 +15,11 @@ module.exports = {
     url: process.env.DATABASE_URL,
     logging: false,
     dialect: "postgres",
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false, // Use this if the SSL certificate is self-signed
+      },
+    },
   },
 };

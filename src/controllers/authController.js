@@ -1,5 +1,6 @@
 import { User, UserRole } from "../database/models";
 import { checkPassword, createJwtToken, hashPassword } from "../utils/authUtil";
+import { sendMail } from "../utils/mailSender";
 import { getStandardResponse } from "../utils/standardResponse";
 
 export const login = async (req, res, next) => {
@@ -114,7 +115,7 @@ export const SendPasswordResetEmail = async (req, res, next) => {
       verificationLink: resetLink,
     };
 
-    await sendMail(User.fullName, email, message, false);
+    sendMail(userFound.fullName, email, message, false);
     return getStandardResponse(req, res, 200, "Email was sent");
   } catch (error) {
     next(error);

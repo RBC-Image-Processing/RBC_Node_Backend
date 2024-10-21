@@ -1,6 +1,11 @@
 import { User } from "../database/models";
 import { assignRole } from "../utils/assignRole";
-import { generateRandomPassword, hashPassword } from "../utils/authUtil";
+import {
+  createJwtToken,
+  generateRandomPassword,
+  hashPassword,
+} from "../utils/authUtil";
+import { sendMail } from "../utils/mailSender";
 import { getStandardResponse } from "../utils/standardResponse";
 
 export const getUsers = async (req, res, next) => {
@@ -167,7 +172,7 @@ export const SendPasswordUpdateEmail = async (req, res, next) => {
       verificationLink: resetLink,
     };
 
-    await sendMail(User.fullName, email, message, false);
+    sendMail(userFound.fullName, email, message, true);
     return getStandardResponse(req, res, 200, "Email was sent");
   } catch (error) {
     next(error);

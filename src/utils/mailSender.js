@@ -66,6 +66,8 @@ const emailTemplate = ({ fullName, domain, verificationLink }) => `
                 <span style="font-weight: bold; font-size: 24px; margin-bottom:50px; color: #1a1a1a"
                   >Dear, ${fullName}! </span
                 ><br />
+                <br />
+                <br />
 
         We have received your request to reset your password. To finish resetting your password, go to the following link.
  </td>
@@ -80,7 +82,7 @@ const emailTemplate = ({ fullName, domain, verificationLink }) => `
                     <td
                       align="center"
                       style="
-                        background-color:##005A9C ;
+                        background-color:#005A9C ;
                         padding: 10px 20px;
                         border-radius: 5px;
                       "
@@ -91,7 +93,7 @@ const emailTemplate = ({ fullName, domain, verificationLink }) => `
                           style="
                   display: inline-block;
                   padding: 10px 20px;
-                  background-color:##005A9C ;
+                  background-color:#005A9C ;
                   color: white;
                   text-decoration: none;
                   font-weight: bold;
@@ -304,6 +306,8 @@ const regEmailTemplate = ({ fullName, domain, verificationLink }) => `
                 <span style="font-weight: bold; font-size: 24px; margin-bottom:50px; color: #1a1a1a"
                   >Dear, ${fullName}! </span
                 ><br />
+                <br />
+                <br />
 
       Thank you for registering. To complete your account setup, please click continue
 Once your account is active, you'll be able to enjoy all the features of RBC MIDaP.
@@ -320,7 +324,7 @@ If you did not sign up for this account, please disregard this message.
                     <td
                       align="center"
                       style="
-                        background-color:##005A9C ;
+                        background-color:#005A9C ;
                         padding: 10px 20px;
                         border-radius: 5px;
                       "
@@ -331,7 +335,7 @@ If you did not sign up for this account, please disregard this message.
                           style="
                   display: inline-block;
                   padding: 10px 20px;
-                  background-color:##005A9C ;
+                  background-color:#005A9C ;
                   color: white;
                   text-decoration: none;
                   font-weight: bold;

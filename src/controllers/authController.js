@@ -106,7 +106,7 @@ export const SendPasswordResetEmail = async (req, res, next) => {
     let token = await createJwtToken(userFound.userId, userFound.roleId);
 
     //TODO Update the stuff here
-    const resetLink = `http://localhost:8000/password-reset?token=${token}`;
+    const resetLink = `https://rbc-frontend.onrender.com/reset-password?token=${token}`;
 
     //send verification email
     let message = {

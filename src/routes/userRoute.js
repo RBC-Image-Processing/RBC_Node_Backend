@@ -7,9 +7,11 @@ import {
   createUser,
   updateUser,
   deleteUser,
+  passwordUpdate,
+  SendPasswordUpdateEmail,
 } from "../controllers/userController";
 import { getAuthorisation } from "../middlewares/requireAuthRoles";
-import { passwordReset } from "../controllers/authController";
+
 import { routeAuth } from "../middlewares/routeAuth";
 
 const router = Router();
@@ -24,7 +26,8 @@ router.put("/:userId", getAuthorisation([Roles.SUPPORT_USER]), updateUser);
 
 router.delete("/:userId", getAuthorisation([Roles.SUPPORT_USER]), deleteUser);
 
-router.get("/account", routeAuth);
-router.post("/account", routeAuth, passwordReset);
+router.post("/activate-account-request", SendPasswordUpdateEmail);
+router.get("/activate-account", routeAuth);
+router.post("/activate-account", routeAuth, passwordUpdate);
 
 export default router;

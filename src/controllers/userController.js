@@ -1,6 +1,6 @@
 import { User } from "../database/models";
 import { assignRole } from "../utils/assignRole";
-import { generateRandomPassword } from "../utils/authUtil";
+import { generateRandomPassword, hashPassword } from "../utils/authUtil";
 import { getStandardResponse } from "../utils/standardResponse";
 
 export const getUsers = async (req, res, next) => {
@@ -138,6 +138,83 @@ export const deleteUser = async (req, res, next) => {
     return getStandardResponse(req, res, 200, "User deleted");
   } catch (error) {
     console.log("Error " + error);
+    next(error);
+  }
+};
+
+export const SendPasswordUpdateEmail = async (req, res, next) => {
+  let { email } = req.body;
+
+  try {
+    //check if the person is in the database
+    let userFound = await User.findOne({
+      where: { email: email },
+    });
+
+    if (!userFound) {
+      return getStandardResponse(req, res, 404, "User not found", null);
+    }
+
+    //create a reset  link
+    let token = await createJwtToken(userFound.userId, userFound.roleId);
+
+    //TODO Update the stuff here
+    const resetLink = `https://rbc-frontend.onrender.com/activate?token=${token}`;
+
+    //send verification email
+    let message = {
+      subject: "Finish Creating your Account: RBC_MidAp Registration",
+      verificationLink: resetLink,
+    };
+
+    await sendMail(User.fullName, email, message, false);
+    return getStandardResponse(req, res, 200, "Email was sent");
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const passwordUpdate = async (req, res, next) => {
+  const { newPassword } = req.body;
+
+  try {
+    if (newPassword.length < 6) {
+      return getStandardResponse(
+        req,
+        res,
+        404,
+        "Password Must be 6 characters long",
+        null
+      );
+    }
+
+    //verify the token
+    let decoded = req.user;
+
+    //check if the user is in the database
+    let userFound = await User.findOne({
+      where: { userId: decoded.userId },
+    });
+
+    if (!userFound) {
+      return getStandardResponse(req, res, 404, "User not found", null);
+    }
+
+    //hash the password
+    let hashedPassword = await hashPassword(newPassword.trim());
+
+    //update the password in the database
+
+    await userFound.update({ password: hashedPassword });
+
+    return getStandardResponse(
+      req,
+      res,
+      200,
+      "Password  was added successfully",
+      null
+    );
+  } catch (error) {
     next(error);
   }
 };

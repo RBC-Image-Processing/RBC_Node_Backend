@@ -17,8 +17,8 @@ const router = Router();
 router.post("/login", login);
 router.post("/change-password", requireAuth, changePassword);
 router.post("/request-password-reset", SendPasswordResetEmail);
-router.get("/password-reset", routeAuth);
-router.post("/password-reset", routeAuth, passwordReset);
+router.get("/reset-password", routeAuth);
+router.post("/reset-password", routeAuth, passwordReset);
 // router.post(
 //   "/password-reset-id",
 //   getAuthorisation([Roles.SUPPORT_USER]),

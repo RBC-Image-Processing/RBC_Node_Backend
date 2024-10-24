@@ -1,3 +1,4 @@
+import db from "../database/models";
 import { User } from "../database/models";
 import { assignRole } from "../utils/assignRole";
 import {
@@ -92,31 +93,32 @@ export const createUser = async (req, res, next) => {
 };
 
 export const updateUser = async (req, res, next) => {
+  const transaction = await db.sequelize.transaction();
   try {
     const { userId } = req.params;
+    const { roleId, ...otherUserDetails } = req.body;
 
     // Check if the user exists
-    let userFound = await User.findOne({ where: { userId: userId } });
+    let userFound = await User.findOne({ where: { userId }, transaction });
 
     if (!userFound) {
+      await transaction.rollback();
       return getStandardResponse(req, res, 404, "User not found", null);
     }
 
-    // Check if the role_id has changed
-    if (role_id && role_id !== userFound.role_id) {
-      // Update the user's role and notify them
-      await userFound.update({ role_id });
-      assignRole(userId, role_id); // This should handle role assignment and sending email notifications.
+    // If the roleId is different, include it in the update and assign the new role
+    if (roleId && roleId !== userFound.roleId) {
+      otherUserDetails.roleId = roleId;
+      assignRole(userId, roleId); // Ensure this function is properly defined
     }
 
-    // Update other user details (excluding role_id)
-    await userFound.update({ ...otherUserDetails });
+    // Update user details (including roleId if applicable)
+    await userFound.update({ ...otherUserDetails }, { transaction });
 
     const userResponse = userFound.toJSON();
-
-    // Remove the password from the response object
     delete userResponse.password;
 
+    await transaction.commit();
     return getStandardResponse(
       req,
       res,
@@ -125,6 +127,7 @@ export const updateUser = async (req, res, next) => {
       userResponse
     );
   } catch (error) {
+    await transaction.rollback();
     console.error("Error: " + error);
     next(error);
   }
@@ -210,7 +213,7 @@ export const passwordUpdate = async (req, res, next) => {
 
     //update the password in the database
 
-    await userFound.update({ password: hashedPassword });
+    await userFound.update({ password: hashedPassword, isActive: true });
 
     return getStandardResponse(
       req,

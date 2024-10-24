@@ -1,4 +1,4 @@
-import { User, UserRole } from "../database/models";
+import { User, Role } from "../database/models";
 import { checkPassword, createJwtToken, hashPassword } from "../utils/authUtil";
 import { sendMail } from "../utils/mailSender";
 import { getStandardResponse } from "../utils/standardResponse";
@@ -10,6 +10,11 @@ export const login = async (req, res, next) => {
     //check if the provided email is in the database
     let userFound = await User.findOne({
       where: { email: email },
+      include: [
+        {
+          model: Role,
+        },
+      ],
     });
     if (!userFound) {
       return getStandardResponse(
@@ -39,12 +44,11 @@ export const login = async (req, res, next) => {
 
     //create a token for the user
     let token = await createJwtToken(userFound.userId, userFound.roleId);
-
     return getStandardResponse(req, res, 200, "Login successful", {
       token: token,
       email: userFound.email,
       fullName: userFound.fullName,
-      roleId: userFound.roleId,
+      roleName: userFound.Role.roleName,
     });
   } catch (error) {
     console.log("Error " + error);

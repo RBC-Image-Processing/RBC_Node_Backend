@@ -25,6 +25,18 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         unique: true,
       },
+
+      isActive: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+      },
+
+      verified: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true, // Set default to true (active)
+      },
+
       password: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -36,7 +48,6 @@ module.exports = (sequelize, DataTypes) => {
   User.associate = (models) => {
     User.belongsTo(models.Role, {
       foreignKey: "roleId",
-      as: "role",
     });
   };
 

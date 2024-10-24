@@ -1,6 +1,6 @@
 export const Roles = {
   NON_SPECIALIST: 1,
-  DOCTOR: 2,
-  SPECIALIST: 3,
-  SUPPORT_USER:4
+  PHYSICIAN: 2,
+  RADIOLOGIST: 3,
+  ADMINISTRATOR: 4,
 };

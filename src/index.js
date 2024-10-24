@@ -4,6 +4,7 @@ const port = process.env.PORT || 3000;
 
 (async () => {
   try {
+    
     await db.sequelize.authenticate();
     console.log(`Connected to ${process.env.NODE_ENV} database`);
   } catch (error) {

@@ -16,15 +16,15 @@ import { routeAuth } from "../middlewares/routeAuth";
 
 const router = Router();
 
-router.post("/", getAuthorisation([Roles.SUPPORT_USER]), createUser);
+router.post("/", getAuthorisation([Roles.ADMINISTRATOR]), createUser);
 
-router.get("/", getAuthorisation([Roles.SUPPORT_USER]), getUsers);
+router.get("/", getAuthorisation([Roles.ADMINISTRATOR]), getUsers);
 
-router.get("/:userId", getAuthorisation([Roles.SUPPORT_USER]), getUser);
+router.get("/:userId", getAuthorisation([Roles.ADMINISTRATOR]), getUser);
 
-router.put("/:userId", getAuthorisation([Roles.SUPPORT_USER]), updateUser);
+router.put("/:userId", getAuthorisation([Roles.ADMINISTRATOR]), updateUser);
 
-router.delete("/:userId", getAuthorisation([Roles.SUPPORT_USER]), deleteUser);
+router.delete("/:userId", getAuthorisation([Roles.ADMINISTRATOR]), deleteUser);
 
 router.post("/activate-account-request", SendPasswordUpdateEmail);
 router.get("/activate-account", routeAuth);

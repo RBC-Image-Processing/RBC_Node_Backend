@@ -1,16 +1,22 @@
 // pacsService.js
-import { create } from "axios";
+import axios from "axios"; // Import axios
+
 import { config } from "dotenv";
 
 config();
 
 class PacsService {
   constructor() {
-    this.client = create({
-      baseURL: process.env.PACS_BASE_URL,
+    // Base64 encoding of username:password for Basic Authentication
+    const username = process.env.PACS_USERNAME;
+    const password = process.env.PACS_PASSWORD;
+    const authString = btoa(`${username}:${password}`); // Base64 encode
+
+    this.client = axios.create({
+      baseURL: process.env.PACS_BASE_URL, // Set the base URL from environment variables
       headers: {
         Accept: "application/json",
-        // Authorization: `Bearer ${process.env.PACS_API_KEY}`,
+        Authorization: `Basic ${authString}`, // Add Basic Authorization header
       },
     });
   }
@@ -19,6 +25,20 @@ class PacsService {
     try {
       const response = await this.client.get(endpoint);
       return response.data;
+    } catch (error) {
+      throw new Error(`Error in PACS GET request: ${error.message}`);
+    }
+  }
+
+  async getFile(endpoint) {
+    try {
+      const response = await this.client.get(endpoint, {
+        responseType: "arraybuffer",
+        headers: { Accept: "application/dicom" },
+      });
+
+      console.log(Buffer.from(response.data), "buffer");
+      return Buffer.from(response.data);
     } catch (error) {
       throw new Error(`Error in PACS GET request: ${error.message}`);
     }

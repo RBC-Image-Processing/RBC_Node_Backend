@@ -20,7 +20,16 @@ router.post("/", getAuthorisation([Roles.ADMINISTRATOR]), createUser);
 
 router.get("/", getAuthorisation([Roles.ADMINISTRATOR]), getUsers);
 
-router.get("/:userId", getAuthorisation([Roles.ADMINISTRATOR]), getUser);
+router.get(
+  "/:userId",
+  getAuthorisation([
+    Roles.ADMINISTRATOR,
+    Roles.NON_SPECIALIST,
+    Roles.PHYSICIAN,
+    Roles.RADIOLOGIST,
+  ]),
+  getUser
+);
 
 router.put("/:userId", getAuthorisation([Roles.ADMINISTRATOR]), updateUser);
 

@@ -24,7 +24,7 @@ export const assignRole = async (userId, roleId, isReg) => {
     let token = await createJwtToken(user.userId, user.roleId);
 
     //TODO Update the stuff here
-    const resetLink = `http://localhost:8000/account?token=${token}`;
+    const resetLink = `https://rbc-frontend.onrender.com/reset-password?token=${token}`;
 
     //send verification email
     let message = {

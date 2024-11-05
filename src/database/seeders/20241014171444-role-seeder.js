@@ -13,19 +13,19 @@ module.exports = {
         },
         {
           roleId: 2,
-          roleName: "DOCTOR",
+          roleName: "PHYSICIAN",
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
           roleId: 3,
-          roleName: "SPECIALIST",
+          roleName: "RADIOLOGIST",
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
           roleId: 4,
-          roleName: "SUPPORT_USER",
+          roleName: "ADMINISTRATOR",
           createdAt: new Date(),
           updatedAt: new Date(),
         },

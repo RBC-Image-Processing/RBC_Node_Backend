@@ -1,5 +1,5 @@
 import db from "../database/models";
-import { User } from "../database/models";
+import { User, Role } from "../database/models";
 import { assignRole } from "../utils/assignRole";
 import {
   createJwtToken,
@@ -12,7 +12,15 @@ import { getStandardResponse } from "../utils/standardResponse";
 export const getUsers = async (req, res, next) => {
   try {
     //retrieve all the users of the system
-    let users = await User.findAll({ attributes: { exclude: ["password"] } });
+    let users = await User.findAll({
+      attributes: { exclude: ["password"] },
+      include: [
+        {
+          model: Role,
+          attributes: ["roleName", "roleId"],
+        },
+      ],
+    });
 
     if (!users) {
       return getStandardResponse(req, res, 404, "No users found", null);
@@ -32,6 +40,12 @@ export const getUser = async (req, res, next) => {
     let singleUser = await User.findOne({
       where: { userId: userId },
       attributes: { exclude: ["password"] },
+      include: [
+        {
+          model: Role,
+          attributes: ["roleName", "roleId"],
+        },
+      ],
     });
 
     if (!singleUser) {
@@ -70,8 +84,6 @@ export const createUser = async (req, res, next) => {
     let default_pass = { password: generateRandomPassword() };
 
     let userObj = { ...req.body, ...default_pass };
-
-    console.log(userObj, "user obj");
 
     //create and return a new user if they does not exist
     let createdUser = await User.create(userObj);

@@ -1,19 +1,20 @@
-// pacsService.js
+// ApiService.js
 import axios from "axios"; // Import axios
 
 import { config } from "dotenv";
 
 config();
 
-class PacsService {
-  constructor() {
+class ApiService {
+  constructor(base_url) {
     // Base64 encoding of username:password for Basic Authentication
     const username = process.env.PACS_USERNAME;
     const password = process.env.PACS_PASSWORD;
     const authString = btoa(`${username}:${password}`); // Base64 encode
+    const url = base_url || process.env.PACS_BASE_URL;
 
     this.client = axios.create({
-      baseURL: process.env.PACS_BASE_URL, // Set the base URL from environment variables
+      baseURL: url, // Set the base URL from environment variables
       headers: {
         Accept: "application/json",
         Authorization: `Basic ${authString}`, // Add Basic Authorization header
@@ -72,4 +73,4 @@ class PacsService {
   }
 }
 
-export default new PacsService();
+export default new ApiService();

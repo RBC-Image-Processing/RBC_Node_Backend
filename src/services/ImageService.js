@@ -1,4 +1,4 @@
-import pacsService from "./PacsService";
+import ApiService from "./ApiService";
 
 class ImageService {
   constructor() {}
@@ -7,7 +7,7 @@ class ImageService {
   async getImageFile(instanceId) {
     try {
       console.log(instanceId, "the instance id");
-      const response = await pacsService.getFile(
+      const response = await ApiService.getFile(
         `/instances/${instanceId}/file`
       );
 

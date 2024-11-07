@@ -1,4 +1,4 @@
-import pacsService from "./PacsService";
+import ApiService from "./ApiService";
 
 class PatientService {
   constructor() {}
@@ -6,7 +6,7 @@ class PatientService {
   //api call to get the patient information
   async getPatientInfo(patientId) {
     try {
-      const response = await pacsService.get(`/patients/${patientId}`);
+      const response = await ApiService.get(`/patients/${patientId}`);
       return response;
     } catch (error) {
       return error.message;
@@ -17,13 +17,13 @@ class PatientService {
   async getPatientList() {
     try {
       // Get the list of patients
-      const response = await pacsService.get("/patients");
+      const response = await ApiService.get("/patients");
 
       // Check if the response has data and iterate over each patient to retrieve detailed info
       const patientList = await Promise.all(
         response.map(async (patientId) => {
           // Make an API call for each patient to get detailed information
-          const patientInfo = await pacsService.get(`/patients/${patientId}`);
+          const patientInfo = await ApiService.get(`/patients/${patientId}`);
           // Merge or aggregate patient basic info with detailed info
           return { patientInfo };
         })
@@ -41,7 +41,7 @@ class PatientService {
 
   async deletePatientById(patientId) {
     try {
-      const response = await pacsService.delete(`/patients/${patientId}`);
+      const response = await ApiService.delete(`/patients/${patientId}`);
       return response;
     } catch (error) {
       return error.message;
@@ -52,7 +52,7 @@ class PatientService {
 
   async updatePatientById(patientId) {
     try {
-      const response = await pacsService.put(`/patients/${patientId}`);
+      const response = await ApiService.put(`/patients/${patientId}`);
       return response;
     } catch (error) {
       return error.message;

@@ -1,9 +1,8 @@
 import Router from "express";
-import { getImage } from "../controllers/imageController";
+import { getInterpretation } from "../controllers/aiInterpretationController";
 
 const router = Router();
 
-
-router.get("/:id", getImage);
+router.get("/", getInterpretation);
 
 export default router;

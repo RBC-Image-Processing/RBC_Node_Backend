@@ -1,22 +1,41 @@
+import { getIntepretationData } from "../services/AiIntepretationService";
 import { getStandardResponse } from "../utils/standardResponse";
-import { getImageFile } from "../services/AiInterpretationService";
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" }); // Specifies the folder to store the uploaded files
 
 export const getInterpretation = async (req, res, next) => {
   try {
-    const imageId = req.params.id;
-    const dicomBuffer = await getIntepretationData(imageId);
+    // Middleware to handle the file upload before getting interpretation data
+    upload.single("file")(req, res, async (err) => {
+      if (err) {
+        // If multer encounters an error during the file upload
+        return res.status(400).json({
+          message: "File upload failed",
+          error: err.message,
+        });
+      }
 
-    console.log(dicomBuffer, "the dicom buffer");
-    res.set({
-      "Content-Type": "application/dicom",
-      "Content-Length": dicomBuffer.length,
-      "Access-Control-Allow-Origin": "*", // Adjust based on your CORS needs
+      // At this point, req.file contains the uploaded file data
+      console.log("Received file:", req.file);
+
+      // Retrieve the interpretation data
+      const interpretationData = await getIntepretationData(req.file);
+
+      // Set response content type (optional)
+      res.set({
+        "Content-Type": "application/json", // Adjusted to JSON for API response
+      });
+
+      return getStandardResponse(
+        req,
+        res,
+        200,
+        "Interpretation Retrieved successfully",
+        interpretationData
+      );
     });
-
-    return res.send(dicomBuffer);
-
   } catch (error) {
-    next(error);
     console.log(error);
+    next(error);
   }
 };

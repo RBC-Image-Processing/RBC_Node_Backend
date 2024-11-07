@@ -1,15 +1,15 @@
 import ApiService from "./ApiService";
 
-class AiIntepretation {
-  constructor() {
-    this.apiServiceInstance = new ApiService(process.env.AI_SERVICE);
-  }
+class AiInterpretationService {
+  constructor() {}
 
-  async getIntepretationData() {
+  async getIntepretationData(data) {
     try {
-      const response = await this.apiServiceInstance.get(
-        `/predict_with_interpretation`
+      const response = await ApiService.post(
+        `/predict_with_interpretation`,
+        data
       );
+      console.log(response, "the response");
       return response;
     } catch (error) {
       return error.message;
@@ -17,4 +17,4 @@ class AiIntepretation {
   }
 }
 
-export default new AiIntepretation();
+module.exports = new AiInterpretationService();

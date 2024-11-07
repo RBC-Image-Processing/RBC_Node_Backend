@@ -12,7 +12,9 @@ class StudyService {
     }
   }
 
-  async getStudyList(limit = 10, offset = 0) {
+
+
+  async getStudyList(limit = 20, offset = 0) {
     try {
       // Fetch all studies
       const studiesResponse = await ApiService.get("/studies");

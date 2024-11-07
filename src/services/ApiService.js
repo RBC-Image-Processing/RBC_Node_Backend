@@ -38,7 +38,7 @@ class ApiService {
         headers: { Accept: "application/dicom" },
       });
 
-      console.log(Buffer.from(response.data), "buffer");
+      // console.log(Buffer.from(response.data), "buffer");
       return Buffer.from(response.data);
     } catch (error) {
       throw new Error(`Error in PACS GET request: ${error.message}`);

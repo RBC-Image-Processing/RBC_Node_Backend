@@ -1,6 +1,11 @@
 import Router from "express";
 
-import { getStudyData, getStudies } from "../controllers/studyController";
+import { handleFileUpload } from "../middlewares/dicomFileHandler";
+import {
+  getStudyData,
+  getStudies,
+  uploadStudy,
+} from "../controllers/studyController";
 
 const router = Router();
 
@@ -9,6 +14,7 @@ const router = Router();
 router.get("/:id", getStudyData);
 
 router.get("/", getStudies);
+router.post("/upload", handleFileUpload, uploadStudy);
 
 // router.delete("/:id", deletePatient);
 

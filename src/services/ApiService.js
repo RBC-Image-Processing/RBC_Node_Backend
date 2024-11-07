@@ -6,18 +6,18 @@ import { config } from "dotenv";
 config();
 
 class ApiService {
-  constructor(base_url) {
+  constructor(base_url, username, password) {
     // Base64 encoding of username:password for Basic Authentication
-    const username = process.env.PACS_USERNAME;
-    const password = process.env.PACS_PASSWORD;
+    const username = username || process.env.PACS_USERNAME;
+    const password = password || process.env.PACS_PASSWORD;
     const authString = btoa(`${username}:${password}`); // Base64 encode
     const url = base_url || process.env.PACS_BASE_URL;
 
     this.client = axios.create({
-      baseURL: url, // Set the base URL from environment variables
+      baseURL: url, // Set the base URL
       headers: {
         Accept: "application/json",
-        Authorization: `Basic ${authString}`, // Add Basic Authorization header
+        ...(url ? {} : { Authorization: `Basic ${authString}` }),
       },
     });
   }

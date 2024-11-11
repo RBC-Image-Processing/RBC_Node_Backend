@@ -1,5 +1,7 @@
 // ApiService.js
 import axios from "axios"; // Import axios
+const fs = require("fs"); // For reading file streams in Node.js
+const FormData = require("form-data"); // For creating FormData in Node.js
 
 import { config } from "dotenv";
 
@@ -11,13 +13,13 @@ class ApiService {
     const username = process.env.PACS_USERNAME;
     const password = process.env.PACS_PASSWORD;
     const authString = btoa(`${username}:${password}`); // Base64 encode
-    const url = process.env.PACS_BASE_URL;
+    const url = process.env.AI_SERVICE;
 
     this.client = axios.create({
       baseURL: url, // Set the base URL
       headers: {
         Accept: "application/json",
-        Authorization: `Basic ${authString}`,
+        // Authorization: `Basic ${authString}`,
       },
     });
   }
@@ -42,6 +44,30 @@ class ApiService {
       return Buffer.from(response.data);
     } catch (error) {
       throw new Error(`Error in PACS GET request: ${error.message}`);
+    }
+  }
+
+  async postFile(endpoint, fileData) {
+    try {
+      // Create a new FormData instance
+      const formData = new FormData();
+
+      // Attach the file stream with a custom filename and content type
+      formData.append("file", fs.createReadStream(`${fileData.path}`), {
+        filename: `${fileData.filename}`,
+        contentType: "application/octet-stream",
+      });
+
+      // Use axios to post with FormData headers
+      const response = await this.client.post(endpoint, formData, {
+        headers: {
+          ...formData.getHeaders(), // Adds necessary FormData headers
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      throw new Error(`Error in PACS POST request: ${error.message}`);
     }
   }
 

@@ -1,20 +1,19 @@
 import ApiService from "./ApiService";
+import fs from "fs";
+import path from "path";
 
 class AiInterpretationService {
   constructor() {}
 
   async getIntepretationData(fileData) {
     try {
-      const response = await ApiService.postFile(
-        `/predict_with_interpretation`,
-        fileData
-      );
-
+      const response = await ApiService.postFile("/predict_with_interpretation", fileData);
       return response;
     } catch (error) {
-      return error.message;
+      console.error("Error in getInterpretationData:", error.message);
+      return { error: error.message };
     }
   }
 }
 
-module.exports = new AiInterpretationService();
+export default new AiInterpretationService();

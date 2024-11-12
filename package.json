@@ -17,14 +17,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cmusv-fse2/fse-rw-s24-rw4.git"
+    "url": "git+https://github.com/RBC-Image-Processing/RBC_Node_Backend"
   },
   "keywords": [
     "ESN",
     "CMU",
     "CMU-Africa",
-    "FSE",
-    "Team4"
+    "Practicum",
+    "RBC-MIDAP"
   ],
   "author": "RW4",
   "license": "ISC",

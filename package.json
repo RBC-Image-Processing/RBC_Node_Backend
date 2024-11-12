@@ -1,7 +1,7 @@
 {
   "name": "esn-be",
   "version": "1.0.0",
-  "description": "This project is for Team 4 in the Foundations of Software Engineering at Carnegie Mellon University. It is the Emergency Social Network application",
+  "description": "This project is for the practicum team, working on medical image data processing",
   "main": "index.js",
   "scripts": {
     "start": "npm run build && node dist/index",

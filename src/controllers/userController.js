@@ -81,7 +81,11 @@ export const createUser = async (req, res, next) => {
       return getStandardResponse(req, res, 200, "User already exists", null);
     }
 
-    let default_pass = { password: generateRandomPassword() };
+    let randomPass = generateRandomPassword();
+
+    let default_pass = { password: await hashPassword(randomPass.trim()) };
+
+    console.log(randomPass, "teh def paa");
 
     let userObj = { ...req.body, ...default_pass };
 

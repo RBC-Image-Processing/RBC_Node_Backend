@@ -12,8 +12,6 @@ class StudyService {
     }
   }
 
-
-
   async getStudyList(limit = 20, offset = 0) {
     try {
       // Fetch all studies

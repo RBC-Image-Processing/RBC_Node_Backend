@@ -1,5 +1,5 @@
 // UploadService.js
-import pacsService from "./PacsService";
+import ApiService from "./ApiService";
 
 class UploadService {
   constructor() {}
@@ -57,8 +57,8 @@ class UploadService {
       }
 
       // Update study metadata
-    //   await this.updateStudyMetadata(studyId, metadata);
-    //   console.log("Study metadata updated");
+      //   await this.updateStudyMetadata(studyId, metadata);
+      //   console.log("Study metadata updated");
 
       // Return final study structure
       const finalStudy = await this.getStudyStructure(studyId);
@@ -82,7 +82,7 @@ class UploadService {
         mimetype: file.mimetype,
       });
 
-      const response = await pacsService.post("/instances", file.buffer, {
+      const response = await ApiService.post("/instances", file.buffer, {
         headers: {
           "Content-Type": "application/dicom",
           Accept: "application/json",
@@ -98,8 +98,8 @@ class UploadService {
       }
 
       // Get instance details to find its series and study
-      const instanceInfo = await pacsService.get(`/instances/${response.ID}`);
-      const seriesInfo = await pacsService.get(
+      const instanceInfo = await ApiService.get(`/instances/${response.ID}`);
+      const seriesInfo = await ApiService.get(
         `/series/${instanceInfo.ParentSeries}`
       );
 
@@ -124,13 +124,13 @@ class UploadService {
   async isInstanceInStudy(instanceId, targetStudyId) {
     try {
       // Get instance details
-      const instanceInfo = await pacsService.get(`/instances/${instanceId}`);
+      const instanceInfo = await ApiService.get(`/instances/${instanceId}`);
       if (!instanceInfo.ParentSeries) {
         throw new Error(`Instance ${instanceId} has no parent series`);
       }
 
       // Get series details
-      const seriesInfo = await pacsService.get(
+      const seriesInfo = await ApiService.get(
         `/series/${instanceInfo.ParentSeries}`
       );
       if (!seriesInfo.ParentStudy) {
@@ -166,18 +166,18 @@ class UploadService {
       }
 
       // Get instance's series info
-      const instanceInfo = await pacsService.get(`/instances/${instanceId}`);
-      const seriesInfo = await pacsService.get(
+      const instanceInfo = await ApiService.get(`/instances/${instanceId}`);
+      const seriesInfo = await ApiService.get(
         `/series/${instanceInfo.ParentSeries}`
       );
 
       // Check if we need to create a new series in the target study
-      const targetStudy = await pacsService.get(`/studies/${targetStudyId}`);
+      const targetStudy = await ApiService.get(`/studies/${targetStudyId}`);
 
       // Find a matching series in the target study
       let targetSeriesId = null;
       for (const seriesId of targetStudy.Series) {
-        const series = await pacsService.get(`/series/${seriesId}`);
+        const series = await ApiService.get(`/series/${seriesId}`);
         if (this.isSeriesCompatible(series, seriesInfo)) {
           targetSeriesId = seriesId;
           break;
@@ -193,9 +193,7 @@ class UploadService {
 
       // Move instance to target series
       console.log(`Moving instance ${instanceId} to series ${targetSeriesId}`);
-      await pacsService.put(
-        `/series/${targetSeriesId}/instances/${instanceId}`
-      );
+      await ApiService.put(`/series/${targetSeriesId}/instances/${instanceId}`);
 
       // Verify the move
       const newAssociation = await this.isInstanceInStudy(
@@ -239,44 +237,44 @@ class UploadService {
   /**
    * Updates study metadata
    */
-//   async updateStudyMetadata(studyId, metadata) {
-//     try {
-//       const studyInfo = await pacsService.get(`/studies/${studyId}`);
-//       console.log("Current study info:", studyInfo);
+  //   async updateStudyMetadata(studyId, metadata) {
+  //     try {
+  //       const studyInfo = await ApiService.get(`/studies/${studyId}`);
+  //       console.log("Current study info:", studyInfo);
 
-//       const modifiedStudy = {
-//         PatientMainDicomTags: {
-//           ...studyInfo.PatientMainDicomTags,
-//           PatientID: metadata.patientId,
-//           PatientName: metadata.patientId,
-//         },
-//         MainDicomTags: {
-//           ...studyInfo.MainDicomTags,
-//           StudyDate: this.formatDicomDate(metadata.studyDate),
-//           StudyDescription: metadata.description,
-//         },
-//       };
+  //       const modifiedStudy = {
+  //         PatientMainDicomTags: {
+  //           ...studyInfo.PatientMainDicomTags,
+  //           PatientID: metadata.patientId,
+  //           PatientName: metadata.patientId,
+  //         },
+  //         MainDicomTags: {
+  //           ...studyInfo.MainDicomTags,
+  //           StudyDate: this.formatDicomDate(metadata.studyDate),
+  //           StudyDescription: metadata.description,
+  //         },
+  //       };
 
-//       console.log("Modified study data:", modifiedStudy);
-//       await pacsService.put(`/studies/${studyId}/modify`, modifiedStudy);
-//     } catch (error) {
-//       console.error("Error updating metadata:", error);
-//       throw new Error(`Failed to update study metadata: ${error.message}`);
-//     }
-//   }
+  //       console.log("Modified study data:", modifiedStudy);
+  //       await ApiService.put(`/studies/${studyId}/modify`, modifiedStudy);
+  //     } catch (error) {
+  //       console.error("Error updating metadata:", error);
+  //       throw new Error(`Failed to update study metadata: ${error.message}`);
+  //     }
+  //   }
 
   /**
    * Gets final study structure
    */
   async getStudyStructure(studyId) {
     try {
-      const studyInfo = await pacsService.get(`/studies/${studyId}`);
+      const studyInfo = await ApiService.get(`/studies/${studyId}`);
       const { PatientMainDicomTags, MainDicomTags, Series } = studyInfo;
 
       // Fetch series details
       const seriesDetails = await Promise.all(
         Series.map(async (seriesId) => {
-          const seriesResponse = await pacsService.get(`/series/${seriesId}`);
+          const seriesResponse = await ApiService.get(`/series/${seriesId}`);
           const { MainDicomTags: seriesTags, Instances } = seriesResponse;
 
           const Modality = this.mapModalityToFrontend(seriesTags.Modality);
@@ -284,7 +282,7 @@ class UploadService {
 
           const instanceIds = await Promise.all(
             Instances.map(async (instanceId) => {
-              const instanceResponse = await pacsService.get(
+              const instanceResponse = await ApiService.get(
                 `/instances/${instanceId}`
               );
               return instanceResponse.ID;

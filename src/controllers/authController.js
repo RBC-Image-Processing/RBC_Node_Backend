@@ -29,8 +29,9 @@ export const login = async (req, res, next) => {
     //compare the given password and the password in the database
     let passwordMatch = await checkPassword(
       password.trim(),
-      userFound.password
+      userFound.password.trim()
     );
+    console.log(passwordMatch, "tjje ");
 
     if (!passwordMatch) {
       return getStandardResponse(
@@ -47,6 +48,7 @@ export const login = async (req, res, next) => {
     return getStandardResponse(req, res, 200, "Login successful", {
       token: token,
       email: userFound.email,
+      userId: userFound.userId,
       fullName: userFound.fullName,
       roleName: userFound.Role.roleName,
     });

@@ -187,25 +187,42 @@ class ApiService {
     }
   }
 
+
   async postFile(endpoint, fileData) {
     try {
+
+      // Ensure `fileData` is in the correct structure
+      if (!fileData || !fileData.path || !fileData.originalname) {
+        throw new Error("Invalid file data provided.");
+      }
+
       const formData = new FormData();
-      formData.append("file", fs.createReadStream(`${fileData.path}`), {
-        filename: `${fileData.filename}`,
-        contentType: "application/octet-stream",
+
+      // Attach the file to FormData with appropriate metadata
+      formData.append("file", fs.createReadStream(fileData.path), {
+        filename: fileData.originalname,
+        contentType: "application/octet-stream", // Set content type for binary files
       });
 
+      // Post the formData with correct headers
       const response = await this.client.post(endpoint, formData, {
         headers: {
-          ...formData.getHeaders(),
+          ...formData.getHeaders(), // Includes Content-Type: multipart/form-data boundary
         },
       });
 
       return response.data;
     } catch (error) {
+      console.error(`Error in PACS POST request: ${error.message}`);
+      if (error.response) {
+        console.error("Response data:", error.response.data);
+        console.error("Response status:", error.response.status);
+      }
       throw new Error(`Error in PACS POST request: ${error.message}`);
     }
   }
+
+
 
   async post(endpoint, data) {
     try {

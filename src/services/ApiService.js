@@ -130,8 +130,6 @@ class ApiService {
     // Initialize cache
     this.cache = new Map();
     this.cacheTTL = 20 * 60 * 1000; // Cache timeout: 5 minutes
-
-    console.log(`Requesting ${this.client.defaults.baseURL}/studies`);
   }
 
   // Cache helper function to check and set cache
@@ -187,10 +185,8 @@ class ApiService {
     }
   }
 
-
   async postFile(endpoint, fileData) {
     try {
-
       // Ensure `fileData` is in the correct structure
       if (!fileData || !fileData.path || !fileData.originalname) {
         throw new Error("Invalid file data provided.");
@@ -221,8 +217,6 @@ class ApiService {
       throw new Error(`Error in PACS POST request: ${error.message}`);
     }
   }
-
-
 
   async post(endpoint, data) {
     try {

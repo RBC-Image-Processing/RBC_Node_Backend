@@ -4,22 +4,22 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable("DoctorComments", {
-      doctor_comment_id: {
+      doctorCommentId: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      ai_interpretation_id: {
+      aiInterpretationId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
           model: "AIInterpretations",
-          key: "ai_interpretation_id",
+          key: "aiInterpretationId",
         },
         onDelete: "CASCADE",
       },
-      user_id: {
+      userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {

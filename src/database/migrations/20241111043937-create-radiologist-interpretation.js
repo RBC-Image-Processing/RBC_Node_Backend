@@ -1,38 +1,38 @@
-'use strict';
+"use strict";
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('RadiologistInterpretations', {
-      interpretation_id: {
+    await queryInterface.createTable("RadiologistInterpretations", {
+      interpretationId: {
         type: Sequelize.INTEGER,
         primaryKey: true,
-        autoIncrement: true
+        autoIncrement: true,
       },
-      study_id: {
+      studyId: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      user_id: {
+      userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Users', 
-          key: 'userId'
+          model: "Users",
+          key: "userId",
         },
-        onDelete: 'CASCADE'
+        onDelete: "CASCADE",
       },
       diagnosis: {
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT,
       },
       timestamp: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
-      }
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+      },
     });
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('RadiologistInterpretation');
-  }
+    await queryInterface.dropTable("RadiologistInterpretation");
+  },
 };

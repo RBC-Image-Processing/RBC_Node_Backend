@@ -3,13 +3,13 @@ module.exports = (sequelize, DataTypes) => {
   const RadiologistInterpretation = sequelize.define(
     "RadiologistInterpretation",
     {
-      interpretation_id: {
+      interpretationId: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
-      study_id: { type: DataTypes.STRING, allowNull: false },
-      user_id: {
+      studyId: { type: DataTypes.STRING, allowNull: false },
+      userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
 
   RadiologistInterpretation.associate = (models) => {
     RadiologistInterpretation.belongsTo(models.User, {
-      foreignKey: "user_id",
+      foreignKey: "userId",
     });
   };
 

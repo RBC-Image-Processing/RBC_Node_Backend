@@ -3,15 +3,15 @@ module.exports = (sequelize, DataTypes) => {
   const AIInterpretation = sequelize.define(
     "AIInterpretation",
     {
-      ai_interpretation_id: {
+      aiInterpretationId: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
-      study_id: { type: DataTypes.STRING, allowNull: false },
+      studyId: { type: DataTypes.STRING, allowNull: false },
       diagnosis: { type: DataTypes.TEXT },
       timestamp: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
-      confidence_score: { type: DataTypes.FLOAT },
+      confidenceScore: { type: DataTypes.FLOAT },
     },
     {
       timestamps: false,

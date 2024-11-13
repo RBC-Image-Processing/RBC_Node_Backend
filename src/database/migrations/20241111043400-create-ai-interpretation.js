@@ -4,13 +4,13 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable("AIInterpretations", {
-      ai_interpretation_id: {
+      aiInterpretationId: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      study_id: {
+      studyId: {
         type: Sequelize.STRING,
         allowNull: false,
       },
@@ -21,7 +21,7 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
-      confidence_score: {
+      confidenceScore: {
         type: Sequelize.FLOAT,
       },
     });

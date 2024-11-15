@@ -6,11 +6,24 @@ import { User } from "../database/models";
 export const createInterpretation = async (req, res, next) => {
   try {
     const { studyId, userId, diagnosis } = req.body;
+
+
+    if (!studyId || !userId || !diagnosis || typeof diagnosis !== "string") {
+      return getStandardResponse(
+        req,
+        res,
+        400,
+        "Incorrectly formatted! request body => studyId, userId,  diagnosis not correctly formatted",
+        null
+      );
+    }
+
     const newInterpretation = await RadiologistInterpretation.create({
       studyId,
       userId,
       diagnosis,
     });
+
     return getStandardResponse(
       req,
       res,

@@ -1,4 +1,4 @@
-import { DoctorComment } from "../database/models";
+import { DoctorComment, AIInterpretation } from "../database/models";
 
 // Add a new doctor comment
 export const createDoctorComment = async (req, res) => {
@@ -19,6 +19,22 @@ export const createDoctorComment = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+// Retrieve all the doctor comments in the system
+export const getAllDoctorComments = async (req, res) => {
+  try {
+    const comments = await DoctorComment.findAll();
+    res.status(200).json({
+      message: "Doctor comments retrieved successfully",
+      data: comments,
+    });
+  } catch (error) {
+    console.error("Error retrieving doctor comments:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
 
 // Retrieve doctor comments based on AI interpretation ID
 export const getDoctorComments = async (req, res) => {
@@ -94,6 +110,34 @@ export const getDoctorCommentsByDoctorId = async (req, res) => {
     });
   } catch (error) {
     console.error("Error retrieving comments by doctor:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+export const getDoctorCommentsByStudyId = async (req, res) => {
+  const { studyId } = req.params;
+  try {
+    const comments = await DoctorComment.findAll({
+      include: [
+        {
+          model: AIInterpretation,
+          where: { studyId },
+          attributes: ["aiInterpretationId", "studyId", "diagnosis", "confidenceScore"],
+        },
+      ],
+    });
+
+    if (comments.length === 0) {
+      return res.status(404).json({ message: "No comments found for this study ID" });
+    }
+
+    res.status(200).json({
+      message: "Doctor comments retrieved successfully",
+      data: comments,
+    });
+  } catch (error) {
+    console.error("Error retrieving doctor comments by study ID:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };

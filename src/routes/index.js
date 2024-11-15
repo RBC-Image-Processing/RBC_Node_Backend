@@ -7,6 +7,7 @@ import studyRoute from "./studyRoute";
 import imageRoute from "./imageRoute";
 import  interpreterRoute from "./aiInterpretationRoute";
 import radiologistInterpretationRoute from "./radiologistInterpretationRoute";
+import doctorCommentRoute from "./doctorCommentRoute";
 
 
 const router = Router();
@@ -19,6 +20,7 @@ router.use("/study", studyRoute);
 router.use("/image", imageRoute);
 router.use("/interpret", interpreterRoute);
 router.use("/interpretation", radiologistInterpretationRoute);
+router.use("/doctor-comments", doctorCommentRoute); 
 
 
 export default router;

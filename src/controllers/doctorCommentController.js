@@ -1,5 +1,5 @@
 import { DoctorComment, AIInterpretation } from "../database/models";
-
+import { User } from "../database/models";
 // Add a new doctor comment
 export const createDoctorComment = async (req, res) => {
   try {

@@ -3,7 +3,6 @@ import { getStandardResponse } from "../utils/standardResponse";
 import multer from "multer";
 import fs from "fs";
 import path from "path";
-import AiIntepretationService from "../services/AiIntepretationService.js";
 
 const upload = multer({ dest: "uploads/" });
 

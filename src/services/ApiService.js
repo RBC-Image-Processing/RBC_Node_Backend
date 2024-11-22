@@ -113,11 +113,17 @@ import FormData from "form-data"; // For creating FormData in Node.js
 config();
 
 class ApiService {
-  constructor() {
+  static instance = null;
+
+  constructor(customUrl = null) {
+    if (ApiService.instance && !customUrl) {
+      return ApiService.instance;
+    }
+
     const username = process.env.PACS_USERNAME;
     const password = process.env.PACS_PASSWORD;
     const authString = btoa(`${username}:${password}`);
-    const url = process.env.PACS_BASE_URL.trim();
+    const url = (customUrl || process.env.PACS_BASE_URL || "").trim();
 
     this.client = axios.create({
       baseURL: url,
@@ -127,11 +133,23 @@ class ApiService {
       },
     });
 
-    // Initialize cache
     this.cache = new Map();
-    this.cacheTTL = 20 * 60 * 1000; // Cache timeout: 5 minutes
+    this.cacheTTL = 20 * 60 * 1000; // Cache timeout: 20 minutes
 
-    console.log(`Requesting ${this.client.defaults.baseURL}/studies`);
+    if (!customUrl) {
+      ApiService.instance = this;
+    }
+  }
+
+  // Static method to get/create instance with optional URL
+  static getInstance(customUrl = null) {
+    if (customUrl) {
+      return new ApiService(customUrl);
+    }
+    if (!ApiService.instance) {
+      ApiService.instance = new ApiService();
+    }
+    return ApiService.instance;
   }
 
   // Cache helper function to check and set cache
@@ -187,10 +205,8 @@ class ApiService {
     }
   }
 
-
   async postFile(endpoint, fileData) {
     try {
-
       // Ensure `fileData` is in the correct structure
       if (!fileData || !fileData.path || !fileData.originalname) {
         throw new Error("Invalid file data provided.");
@@ -222,8 +238,6 @@ class ApiService {
     }
   }
 
-
-
   async post(endpoint, data) {
     try {
       const response = await this.client.post(endpoint, data);
@@ -252,4 +266,8 @@ class ApiService {
   }
 }
 
-export default new ApiService();
+// Export default instance
+export default ApiService.getInstance();
+
+// Also export the class for custom URL usage
+export { ApiService };

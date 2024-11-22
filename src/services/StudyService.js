@@ -12,7 +12,7 @@ class StudyService {
     }
   }
   //LAST TRUE
-  async getStudyList(limit = 2, offset = 0) {
+  async getStudyList(limit = 10, offset = 0) {
     try {
       // Fetch all studies
       const studiesResponse = await ApiService.get("/studies");
@@ -106,94 +106,6 @@ class StudyService {
       return { error: error.message };
     }
   }
-
-  // async getStudyList(limit = 2, offset = 0) {
-  //   try {
-  //     // Fetch all studies and slice for batching
-  //     const studiesResponse = await ApiService.get("/studies");
-  //     const studiesBatch = studiesResponse.slice(offset, offset + limit);
-
-  //     // Fetch study details in parallel
-  //     const studyDetails = await Promise.allSettled(
-  //       studiesBatch.map((studyID) => ApiService.get(`/studies/${studyID}`))
-  //     );
-
-  //     const studyList = await Promise.all(
-  //       studyDetails
-  //         .filter((result) => result.status === "fulfilled")
-  //         .map(async ({ value: studyInfo }) => {
-  //           const {
-  //             PatientMainDicomTags,
-  //             ID: studyId,
-  //             MainDicomTags,
-  //             Series,
-  //           } = studyInfo;
-
-  //           const patientId = PatientMainDicomTags.PatientID;
-  //           const patientName = PatientMainDicomTags.PatientName;
-  //           const description = MainDicomTags.StudyDescription || "Description";
-  //           const studyDate = MainDicomTags.StudyDate;
-
-  //           // Fetch series details in parallel, only those with matching Modality
-  //           const seriesPromises = Series.map((seriesId) =>
-  //             ApiService.get(`/series/${seriesId}`)
-  //           );
-  //           const seriesResults = await Promise.allSettled(seriesPromises);
-
-  //           const seriesDetails = await Promise.all(
-  //             seriesResults
-  //               .filter(
-  //                 (result) =>
-  //                   result.status === "fulfilled" &&
-  //                   ["CR", "XR", "MR"].includes(
-  //                     result.value.MainDicomTags.Modality
-  //                   )
-  //               )
-  //               .map(async ({ value: seriesResponse }) => {
-  //                 const { MainDicomTags: seriesTags, Instances } =
-  //                   seriesResponse;
-
-  //                 const instanceFiles = await Promise.allSettled(
-  //                   Instances.slice(0, limit).map((instanceId) =>
-  //                     ApiService.get(`/instances/${instanceId}`)
-  //                   )
-  //                 );
-
-  //                 return {
-  //                   Modality: seriesTags.Modality,
-  //                   Instances: instanceFiles
-  //                     .filter((result) => result.status === "fulfilled")
-  //                     .map(({ value: instance }) => instance.ID),
-  //                 };
-  //               })
-  //           );
-
-  //           const validSeries = seriesDetails.filter(
-  //             (s) => s && s.Instances.length > 0
-  //           );
-
-  //           if (validSeries.length > 0) {
-  //             return {
-  //               patientId,
-  //               patientName,
-  //               studyId,
-  //               description,
-  //               studyDate,
-  //               modality: validSeries[0].Modality,
-  //               instances: validSeries.flatMap((s) => s.Instances),
-  //             };
-  //           } else {
-  //             return null;
-  //           }
-  //         })
-  //     );
-
-  //     return studyList.filter((study) => study !== null);
-  //   } catch (error) {
-  //     console.error("Error retrieving study list:", error.message);
-  //     return { error: error.message };
-  //   }
-  // }
 }
 
 module.exports = new StudyService();

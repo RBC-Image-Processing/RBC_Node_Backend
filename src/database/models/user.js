@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         references: {
           model: "Roles",
-          key: "role_id",
+          key: "roleId",
         },
       },
       fullName: {
@@ -50,7 +50,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "roleId",
     });
     User.hasMany(models.RadiologistInterpretation, {
-      foreignKey: "user_id",
+      foreignKey: "userId",
     });
   };
 

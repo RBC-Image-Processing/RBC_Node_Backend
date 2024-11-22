@@ -3,16 +3,24 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("AIInterpretations", {
-      ai_interpretation_id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
+    await queryInterface.createTable("RadiologistInterpretations", {
+      interpretationId: {
         type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
       },
-      study_id: {
+      studyId: {
         type: Sequelize.STRING,
         allowNull: false,
+      },
+      userId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Users",
+          key: "userId",
+        },
+        onDelete: "CASCADE",
       },
       diagnosis: {
         type: Sequelize.TEXT,
@@ -21,12 +29,10 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
-      confidence_score: {
-        type: Sequelize.FLOAT,
-      },
     });
   },
+
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("AIInterpretation");
+    await queryInterface.dropTable("RadiologistInterpretation");
   },
 };

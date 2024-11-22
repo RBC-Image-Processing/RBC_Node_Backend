@@ -3,20 +3,20 @@ module.exports = (sequelize, DataTypes) => {
   const DoctorComment = sequelize.define(
     "DoctorComment",
     {
-      doctor_comment_id: {
+      doctorCommentId: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
-      ai_interpretation_id: {
+      aiInterpretationId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
           model: "AIInterpretation",
-          key: "ai_interpretation_id",
+          key: "aiInterpretationId",
         },
       },
-      user_id: {
+      userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -36,12 +36,10 @@ module.exports = (sequelize, DataTypes) => {
 
   DoctorComment.associate = (models) => {
     DoctorComment.belongsTo(models.AIInterpretation, {
-      foreignKey: "ai_interpretation_id",
-      as: "ai_interpretation",
+      foreignKey: "aiInterpretationId",
     });
     DoctorComment.belongsTo(models.User, {
       foreignKey: "userId",
-      as: "doctor",
     });
   };
 

@@ -8,13 +8,16 @@ import { options } from "./doc";
 
 const app = express();
 
-app.use(express.json({ limit: "50mb" }));
-
 app.use(
   cors({
     origin: "*",
   })
 );
+
+app.use(helmet());
+
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, PATCH");
@@ -25,8 +28,6 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.use(express.urlencoded({ limit: "50mb", extended: true }));
-app.use(helmet());
 app.use("/api-doc", swaggerUi.serve, swaggerUi.setup(options.definition));
 app.use("/api", routes);
 app.get("/", (req, res) => {

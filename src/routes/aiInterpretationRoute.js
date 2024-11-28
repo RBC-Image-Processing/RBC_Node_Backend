@@ -3,7 +3,7 @@ import { getInterpretation, createAiInterpretation, createInterpretationRecursiv
 
 const router = Router();
 
-router.get("/", getInterpretation);
+router.post("/", getInterpretation);
 router.post("/create", createAiInterpretation);
 router.post("/create_recursive", createInterpretationRecursive);
 

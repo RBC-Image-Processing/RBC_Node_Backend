@@ -8,7 +8,7 @@ class AiInterpretationService {
     try {
       const apiService = new ApiService(`${process.env.AI_SERVICE}`);
       const response = await apiService.postFile(
-        "/predict_with_interpretation",
+        "/predict_with_interpretation_groq",
         fileData
       );
       return response;

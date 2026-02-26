@@ -13,7 +13,7 @@ export const pingDoc = {
                 properties: {
                   messaage: {
                     type: "string",
-                    example: "Welcome to Emergency Social Network",
+                    example: "Welcome to RBC MIDAp",
                   },
                 },
               },

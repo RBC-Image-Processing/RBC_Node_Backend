@@ -1,9 +1,16 @@
 import { pingDoc } from "./ping";
+import { radiologistInterpretationDoc } from "./radiologistInterpretation";
+import { aiInterpretDoc } from "./aiInterpretation";
+import { doctorCommentsDoc } from "./doctorComment";
+import { studyDoc } from "./patientStudy";
+import { authDoc } from "./authManagement";
+import { userManagementDoc } from "./userManagement";
+
 export const options = {
   definition: {
-    openapi: "3.0.0",
+    openapi: "3.1.0",
     info: {
-      title: "API for Emergency Social Network-RW4",
+      title: "API for  RBC MiDAp",
       version: "1.0.0",
     },
     security: [
@@ -31,7 +38,12 @@ export const options = {
     },
     paths: {
       ...pingDoc,
-
+      ...authDoc,
+      ...userManagementDoc,
+      ...radiologistInterpretationDoc,
+      ...aiInterpretDoc,
+      ...doctorCommentsDoc,
+      ...studyDoc,
     },
   },
   apis: ["**/doc/*"],

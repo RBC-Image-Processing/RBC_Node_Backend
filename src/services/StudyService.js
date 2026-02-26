@@ -12,14 +12,19 @@ class StudyService {
     }
   }
   //LAST TRUE
-  async getStudyList(limit = 2, offset = 0) {
+  async getStudyList(limit = 100, offset = 0) {
     try {
       // Fetch all studies
       const studiesResponse = await ApiService.get("/studies");
 
+      console.log(`[StudyService] Fetching studies with limit=${limit}, offset=${offset}`);
+      console.log(`[StudyService] Total studies in Orthanc: ${studiesResponse.length}`);
+
       // Calculate the end index for batching
-      const endIndex = offset + limit;
-      const studiesBatch = studiesResponse.slice(offset, endIndex);
+      // If limit is -1, return all studies (no pagination)
+      const studiesBatch = limit === -1
+        ? studiesResponse
+        : studiesResponse.slice(offset, offset + limit);
 
       // Iterate over each study in the batch and fetch series and instance details
       const studyList = await Promise.all(
@@ -37,9 +42,6 @@ class StudyService {
           // Extract patient and study information
           const patientId = PatientMainDicomTags.PatientID;
           const patientName = PatientMainDicomTags.PatientName;
-          const description = MainDicomTags.StudyDescription
-            ? MainDicomTags.StudyDescription
-            : "Description";
           const studyDate = MainDicomTags.StudyDate;
 
           // Fetch series information for each study
@@ -51,14 +53,12 @@ class StudyService {
               );
               const { MainDicomTags: seriesTags, Instances } = seriesResponse;
 
-              // Only include series with Modality as XR or MR
-              const Modality =
-                seriesTags.Modality === "CR" ||
-                seriesTags.Modality === "XR" ||
-                seriesTags.Modality === "MR"
-                  ? seriesTags.Modality
-                  : null;
-              if (!Modality) return null; // Skip if Modality is not XR or MR
+              // Only include series with Modality as XR, CR, MR, or DX
+              const allowedModalities = ["CR", "XR", "MR", "DX"];
+              const Modality = allowedModalities.includes(seriesTags.Modality)
+                ? seriesTags.Modality
+                : null;
+              if (!Modality) return null; // Skip if Modality is not in allowed list
 
               // Fetch only a subset of instances based on the limit
               const instanceFiles = await Promise.all(
@@ -70,8 +70,13 @@ class StudyService {
                 })
               );
 
-              // Return structured series info
-              return { Modality, Instances: instanceFiles };
+              // Return structured series info with description
+              return {
+                Modality,
+                Instances: instanceFiles,
+                SeriesDescription: seriesTags.SeriesDescription || null,
+                BodyPartExamined: seriesTags.BodyPartExamined || null
+              };
             })
           );
 
@@ -81,6 +86,38 @@ class StudyService {
           );
 
           if (validSeries.length > 0) {
+            // Build a meaningful description
+            let description = MainDicomTags.StudyDescription;
+
+            if (!description || description.trim() === "") {
+              // Try to use series description
+              const seriesDesc = validSeries[0].SeriesDescription;
+              const bodyPart = validSeries[0].BodyPartExamined;
+              const modality = validSeries[0].Modality;
+
+              if (seriesDesc && seriesDesc.trim() !== "") {
+                description = seriesDesc;
+              } else if (bodyPart && bodyPart.trim() !== "") {
+                // Build description from body part and modality
+                const modalityName = {
+                  'CR': 'Computed Radiography',
+                  'DX': 'Digital Radiography',
+                  'XR': 'X-Ray',
+                  'MR': 'MRI'
+                }[modality] || modality;
+                description = `${bodyPart} ${modalityName}`;
+              } else {
+                // Generic description based on modality
+                const modalityDesc = {
+                  'CR': 'Chest X-Ray',
+                  'DX': 'Chest X-Ray',
+                  'XR': 'X-Ray Study',
+                  'MR': 'MRI Study'
+                }[modality] || 'Medical Imaging Study';
+                description = modalityDesc;
+              }
+            }
+
             // Return the aggregated study object
             return {
               patientId,
@@ -99,6 +136,8 @@ class StudyService {
 
       // Filter out null values from the final list and log the aggregated data
       const filteredStudyList = studyList.filter((study) => study !== null);
+
+      console.log(`[StudyService] Returning ${filteredStudyList.length} studies to frontend`);
 
       return filteredStudyList;
     } catch (error) {

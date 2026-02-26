@@ -21,7 +21,11 @@ export const getStudyData = async (req, res, next) => {
 
 export const getStudies = async (req, res, next) => {
   try {
-    const studies = await getStudyList();
+    // Extract query parameters with defaults
+    const limit = req.query.limit ? parseInt(req.query.limit) : 100;
+    const offset = req.query.offset ? parseInt(req.query.offset) : 0;
+
+    const studies = await getStudyList(limit, offset);
 
     return getStandardResponse(
       req,
